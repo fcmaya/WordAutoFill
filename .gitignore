@@ -1,0 +1,55 @@
+# Arquivos de backup e temporários
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Arquivos de build
+bin/
+obj/
+out/
+
+# Configurações do Visual Studio
+.vs/
+*.user
+*.suo
+*.sln.docstates
+
+# Arquivos gerados pelo sistema
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Arquivos de pacotes
+*.nupkg
+*.snupkg
+packages/
+*.nuspec
+
+# Arquivos de cache e lock
+project.lock.json
+project.fragment.lock.json
+*.lock.json
+
+# Configurações locais
+*.localhistory/
+*.idea/
+*.vscode/
+
+# Arquivos de publicação
+publish/
+*.Publish.xml
+
+# Arquivos de dependências
+node_modules/
+bower_components/
+
+# Arquivos gerados por ferramentas
+*.coverage
+*.coveragexml
+*.testsettings
+*.vsmdi
+*.tss
+*.tlog
+*.lastbuildstate
