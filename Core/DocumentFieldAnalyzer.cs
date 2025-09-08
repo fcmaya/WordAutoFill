@@ -1,9 +1,9 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using MinutaDocx.Utilities;
+using WordAutoFill.Utilities;
 
-namespace MinutaDocx.Core
+namespace WordAutoFill.Core
 {
     public static class DocumentFieldAnalyzer
     {

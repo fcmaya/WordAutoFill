@@ -1,4 +1,4 @@
-namespace MinutaDocx.Models
+namespace WordAutoFill.Models
 {
     public static class DocumentData
     {

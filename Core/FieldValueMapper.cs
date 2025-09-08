@@ -1,4 +1,4 @@
-namespace MinutaDocx.Core
+namespace WordAutoFill.Core
 {
     public static class FieldValueMapper
     {

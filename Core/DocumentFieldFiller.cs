@@ -2,7 +2,7 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 
-namespace MinutaDocx.Core
+namespace WordAutoFill.Core
 {
     public static class DocumentFieldFiller
     {

@@ -1,6 +1,6 @@
-﻿using MinutaDocx.Core;
-using MinutaDocx.Models;
-using MinutaDocx.Utilities;
+﻿using WordAutoFill.Core;
+using WordAutoFill.Models;
+using WordAutoFill.Utilities;
 
 namespace WordAutoFill
 {
