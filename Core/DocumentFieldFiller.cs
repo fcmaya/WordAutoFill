@@ -23,7 +23,8 @@ namespace WordAutoFill.Core
                 PreencherFormFields(mainPart, dados);
 
                 // Method 3: Replace text placeholders
-                SubstituirPlaceholders(mainPart, dados);
+                var valores = DadosParaDicionario(dados);
+                PreencherPlaceholders(mainPart, valores);
 
                 // Method 4: Fill Bookmarks
                 PreencherBookmarks(mainPart, dados);
@@ -217,36 +218,35 @@ namespace WordAutoFill.Core
             }
         }
 
-        private static void SubstituirPlaceholders(MainDocumentPart mainPart, dynamic dados)
+        private static void PreencherPlaceholders(MainDocumentPart mainPart, Dictionary<string, string> valores)
         {
             try
             {
-                var textElements = mainPart.Document.Body.Descendants<Text>().ToList();
-                var placeholdersCount = textElements.Count(te => te.Text.Contains("{{") && te.Text.Contains("}}"));
-                Console.WriteLine($"Processando {placeholdersCount} elementos com placeholders...");
+                var paragraphs = mainPart.Document.Body.Descendants<Paragraph>();
 
-                foreach (var textElement in textElements)
+                foreach (var paragraph in paragraphs)
                 {
-                    if (textElement.Text.Contains("{{") && textElement.Text.Contains("}}"))
+                    var textElements = paragraph.Descendants<Text>().ToList();
+                    if (!textElements.Any()) continue;
+
+                    // Reconstrói o texto completo do parágrafo
+                    string fullText = string.Concat(textElements.Select(t => t.Text));
+
+                    // Procura por placeholders
+                    foreach (var kvp in valores)
                     {
-                        string originalText = textElement.Text;
-                        string text = originalText;
-
-                        // Replace placeholders usando reflection para acessar propriedades dinâmicas
-                        var properties = dados.GetType().GetProperties();
-                        foreach (var property in properties)
+                        if (fullText.Contains(kvp.Key))
                         {
-                            string placeholder = $"{{{{{property.Name}}}}}";
-                            string value = property.GetValue(dados)?.ToString() ?? "";
-
-                            if (text.Contains(placeholder))
-                            {
-                                text = text.Replace(placeholder, value);
-                                Console.WriteLine($"  Substituindo '{placeholder}' por '{value}'");
-                            }
+                            fullText = fullText.Replace(kvp.Key, kvp.Value);
+                            Console.WriteLine($"  Substituindo '{kvp.Key}' por '{kvp.Value}'");
                         }
+                    }
 
-                        textElement.Text = text;
+                    // Atualiza os elementos Text (simples: coloca tudo no primeiro Text)
+                    textElements[0].Text = fullText;
+                    for (int i = 1; i < textElements.Count; i++)
+                    {
+                        textElements[i].Text = string.Empty;
                     }
                 }
             }
@@ -254,6 +254,19 @@ namespace WordAutoFill.Core
             {
                 Console.WriteLine($"Erro ao substituir placeholders: {ex.Message}");
             }
+        }
+
+        private static Dictionary<string, string> DadosParaDicionario(dynamic dados)
+        {
+            var dict = new Dictionary<string, string>();
+            var properties = dados.GetType().GetProperties();
+            foreach (var property in properties)
+            {
+                string placeholder = $"{{{{{property.Name}}}}}";
+                string value = property.GetValue(dados)?.ToString() ?? "";
+                dict[placeholder] = value;
+            }
+            return dict;
         }
     }
 }

@@ -133,30 +133,17 @@ namespace WordAutoFill.Core
         private static void AnalyzeTextPlaceholders(MainDocumentPart mainPart, List<string> camposEncontrados)
         {
             Console.WriteLine("\n4. PLACEHOLDERS DE TEXTO ({{campo}}):");
-            var textElements = mainPart.Document.Body.Descendants<Text>().ToList();
+            var paragraphs = mainPart.Document.Body.Descendants<Paragraph>();
             var placeholders = new HashSet<string>();
 
-            foreach (var textElement in textElements)
+            foreach (var paragraph in paragraphs)
             {
-                var texto = textElement.Text;
-                if (texto.Contains("{{") && texto.Contains("}}"))
+                var fullText = string.Concat(paragraph.Descendants<Text>().Select(t => t.Text));
+                var matches = System.Text.RegularExpressions.Regex.Matches(fullText, @"\{\{[^{}]+\}\}");
+
+                foreach (System.Text.RegularExpressions.Match match in matches)
                 {
-                    // Extrair placeholders
-                    var start = 0;
-                    while ((start = texto.IndexOf("{{", start)) != -1)
-                    {
-                        var end = texto.IndexOf("}}", start);
-                        if (end != -1)
-                        {
-                            var placeholder = texto.Substring(start, end - start + 2);
-                            placeholders.Add(placeholder);
-                            start = end + 2;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
+                    placeholders.Add(match.Value);
                 }
             }
 
@@ -216,6 +203,19 @@ namespace WordAutoFill.Core
                     Console.WriteLine($"  - {campo}");
                 }
             }
+        }
+
+        private static Dictionary<string, string> DadosParaDicionario(dynamic dados)
+        {
+            var dict = new Dictionary<string, string>();
+            var properties = dados.GetType().GetProperties();
+            foreach (var property in properties)
+            {
+                string placeholder = $"{{{{{property.Name}}}}}";
+                string value = property.GetValue(dados)?.ToString() ?? "";
+                dict[placeholder] = value;
+            }
+            return dict;
         }
     }
 }
